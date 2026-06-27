@@ -1,0 +1,30 @@
+﻿{% extends "base.html" %}
+{% block page_title %}Quan tri he thong{% endblock %}
+{% block content %}
+<div class="grid stats">
+  <section class="card"><div class="muted">Tong buoi tap</div><div class="stat-value">{{ summary.total_sessions }}</div></section>
+  <section class="card"><div class="muted">Tong rep</div><div class="stat-value">{{ summary.total_reps }}</div></section>
+  <section class="card"><div class="muted">Diem TB he thong</div><div class="stat-value">{{ "%.1f"|format(summary.average_score) }}</div></section>
+</div>
+<section class="card" style="margin-top:16px">
+  <h2>Quan tri AI</h2>
+  <div class="actions">
+    <form method="post" action="{{ url_for('workout.train_svm_model') }}">
+      <button class="button">Train mo hinh SVM</button>
+    </form>
+    <form method="post" action="{{ url_for('workout.train_random_forest_model') }}">
+      <button class="button secondary">Train mo hinh Random Forest</button>
+    </form>
+  </div>
+  <p class="muted">He thong uu tien Random Forest neu da train; neu chua co thi tu dong dung SVM.</p>
+</section>
+<section class="card" style="margin-top:16px">
+  <h2>Tai khoan</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Username</th><th>Ho ten</th><th>Role</th><th>Muc tieu</th></tr></thead>
+    <tbody>{% for user in users %}
+      <tr><td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.name }}</td><td>{{ user.role }}</td><td>{{ user.goal }}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+</section>
+{% endblock %}

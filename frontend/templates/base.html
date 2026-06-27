@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Squat Pose Coach{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+{% if session.get('user_id') %}
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">Squat Pose Coach</div>
+    <nav class="nav">
+      <a href="{{ url_for('workout.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('pose.workout') }}">Tập với webcam</a>
+      <a href="{{ url_for('workout.history') }}">Lịch sử</a>
+      {% if session.get('role') == 'admin' %}
+      <a href="{{ url_for('workout.admin_dashboard') }}">Quản trị</a>
+      {% endif %}
+      <a href="{{ url_for('auth.logout') }}">Đăng xuất</a>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+        <div class="muted">Xin chào {{ session.get('name') }}</div>
+      </div>
+    </div>
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% else %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block page_title %}Tập Squat Realtime{% endblock %}
+{% block content %}
+<section class="card">
+  <img class="video" src="{{ url_for('pose.video_feed') }}" alt="Webcam squat realtime">
+  <p class="feedback" data-workout-status>Đang khởi tạo nhận diện...</p>
+  <button class="button danger" onclick="stopWorkout()">Kết thúc và lưu buổi tập</button>
+</section>
+<script src="{{ url_for('static', filename='js/workout.js') }}"></script>
+{% endblock %}

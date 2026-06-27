@@ -1,0 +1,12 @@
+.venv/
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.sqlite3
+ml_models/*.pkl
+backend/database/*.sqlite3
+data/*.sqlite3
+.env
+.vscode/
+squat-pose-estimation/

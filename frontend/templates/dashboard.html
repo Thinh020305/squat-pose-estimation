@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="grid stats">
+  <section class="card"><div class="muted">Số buổi tập</div><div class="stat-value">{{ summary.total_sessions }}</div></section>
+  <section class="card"><div class="muted">Tổng số rep</div><div class="stat-value">{{ summary.total_reps }}</div></section>
+  <section class="card"><div class="muted">Điểm trung bình</div><div class="stat-value">{{ "%.1f"|format(summary.average_score) }}</div></section>
+</div>
+
+<div class="grid" style="grid-template-columns:1fr 1fr; margin-top:16px">
+  <section class="card">
+    <h2>Lịch tập</h2>
+    {% if reminder %}
+      <p class="feedback">Đến lịch: {{ reminder.workout_name }} ngày {{ reminder.scheduled_date }}</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('workout.add_schedule') }}">
+      <label>Ngày tập</label><input type="date" name="scheduled_date" required>
+      <label>Số rep mục tiêu</label><input type="number" name="target_reps" min="1" required>
+      <label>Ghi chú</label><textarea name="note"></textarea>
+      <button class="button" style="margin-top:10px">Lưu lịch</button>
+    </form>
+  </section>
+  <section class="card">
+    <h2>Mục tiêu</h2>
+    <form method="post" action="{{ url_for('workout.update_profile') }}">
+      <label>Mục tiêu luyện tập</label>
+      <input name="goal" placeholder="Ví dụ: 3 buổi mỗi tuần">
+      <button class="button" style="margin-top:10px">Cập nhật</button>
+    </form>
+    <h2 style="margin-top:24px">Bắt đầu</h2>
+    <a class="button" href="{{ url_for('pose.workout') }}">Mở webcam</a>
+  </section>
+</div>
+
+<section class="card" style="margin-top:16px">
+  <h2>Tiến trình cải thiện</h2>
+  {% if score_progress %}
+  <div class="progress-chart" aria-label="Biểu đồ score trung bình theo từng buổi tập">
+    <div class="chart-scale">
+      <span>100</span>
+      <span>75</span>
+      <span>50</span>
+      <span>25</span>
+      <span>0</span>
+    </div>
+    <div class="chart-bars">
+      {% for item in score_progress %}
+      <div class="chart-item">
+        <div class="chart-bar-wrap">
+          <div class="chart-bar" style="height: {{ item.average_score }}%"></div>
+        </div>
+        <div class="chart-score">{{ "%.1f"|format(item.average_score) }}</div>
+        <div class="chart-label">#{{ item.id }}</div>
+        <div class="chart-change">
+          {% if item.score_change is none %}
+            Buổi đầu
+          {% elif item.score_change > 0 %}
+            <span class="trend-up">+{{ "%.1f"|format(item.score_change) }}</span>
+          {% elif item.score_change < 0 %}
+            <span class="trend-down">{{ "%.1f"|format(item.score_change) }}</span>
+          {% else %}
+            Không đổi
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+    <p class="muted">Chưa có dữ liệu score từ buổi tập nào.</p>
+  {% endif %}
+</section>
+<section class="card" style="margin-top:16px">
+  <h2>Danh sách lịch tập</h2>
+  <table>
+    <thead><tr><th>Ngày</th><th>Bài tập</th><th>Mục tiêu</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead>
+    <tbody>
+    {% for item in schedules %}
+      <tr>
+        <td>{{ item.scheduled_date }}</td><td>{{ item.workout_name }}</td><td>{{ item.target_reps }}</td>
+        <td>{{ item.note or "" }}</td>
+        <td>
+          {% if item.completed %}Đã xong{% else %}
+          <form method="post" action="{{ url_for('workout.complete_schedule', schedule_id=item.id) }}">
+            <button class="button secondary">Hoàn thành</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}<tr><td colspan="5">Chưa có lịch tập.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

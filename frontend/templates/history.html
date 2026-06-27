@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block page_title %}Lịch sử buổi tập{% endblock %}
+{% block content %}
+<section class="card">
+  <table>
+    <thead><tr><th>Buổi</th><th>Bắt đầu</th><th>Kết thúc</th><th>Số rep</th><th>Điểm TB</th><th></th></tr></thead>
+    <tbody>
+    {% for item in sessions %}
+      <tr>
+        <td>#{{ item.id }}</td><td>{{ item.started_at }}</td><td>{{ item.ended_at }}</td>
+        <td>{{ item.total_reps }}</td><td>{{ "%.1f"|format(item.average_score) }}</td>
+        <td><a class="button secondary" href="{{ url_for('workout.history', session_id=item.id) }}">Chi tiết</a></td>
+      </tr>
+    {% else %}<tr><td colspan="6">Chưa có buổi tập nào.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% if selected_id %}
+<section class="card" style="margin-top:16px">
+  <h2>Điểm từng rep của buổi #{{ selected_id }}</h2>
+  <table>
+    <thead><tr><th>Rep</th><th>Độ sâu</th><th>Thân người</th><th>Nhịp độ</th><th>Tổng</th><th>Nhãn AI</th><th>Feedback</th></tr></thead>
+    <tbody>
+    {% for rep in reps %}
+      <tr><td>{{ rep.rep_number }}</td><td>{{ rep.depth_score }}/40</td><td>{{ rep.torso_score }}/35</td>
+      <td>{{ rep.tempo_score }}/25</td><td>{{ rep.total_score }}</td><td>{{ rep.label }}</td><td>{{ rep.feedback }}</td></tr>
+    {% else %}<tr><td colspan="7">Buổi này chưa có rep hợp lệ.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+{% endblock %}

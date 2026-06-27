@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Đăng ký{% endblock %}
+{% block auth_content %}
+<div class="card form">
+  <h1>Đăng ký {{ "admin" if role == "admin" else "người dùng" }}</h1>
+  {% with messages = get_flashed_messages() %}
+    {% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}
+  {% endwith %}
+  <form method="post">
+    <label>Username</label>
+    <input name="username" required>
+    <label>Họ tên</label>
+    <input name="name" required>
+    {% if role == "user" %}
+    <label>Mục tiêu tập luyện</label>
+    <input name="goal">
+    {% endif %}
+    <label>Mật khẩu</label>
+    <input name="password" type="password" minlength="6" required>
+    <div class="actions" style="margin-top:16px">
+      <button class="button" type="submit">Tạo tài khoản</button>
+      <a class="button secondary" href="{{ url_for('auth.login') }}">Quay lại</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
